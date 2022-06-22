@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +15,22 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
+});
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
+
+require __DIR__ . '/auth.php';
+
+
+Route::middleware('auth')->group(function () {
+
+    Route::prefix('categories')->name('category.')->group(function () {
+
+        Route::get('/', [CategoryController::class, 'index'])->name('home');
+        Route::post('/create', [CategoryController::class, 'store'])->name('create');
+
+    });
 });
